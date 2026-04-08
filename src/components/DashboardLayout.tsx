@@ -25,6 +25,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import jobpilotLogo from "@/assets/jobpilot.svg";
 
 const navItems = [
   { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
@@ -57,7 +58,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
           {!isOverview && (
             <div className="flex items-center gap-2 px-5 py-4 border-b border-border">
               <img
-                src="/src/assets/jobpilot.svg"
+                src={jobpilotLogo}
                 alt="JobPilot Logo"
                 className="w-7 h-7 flex-shrink-0"
               />
@@ -103,6 +104,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
               </SidebarMenu>
             </SidebarGroup>
           </SidebarContent>
+
           <SidebarFooter className="px-2 pb-0 border-t-0">
             <SidebarMenu>
               <SidebarMenuItem>
@@ -118,7 +120,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             {isOverview && (
               <div className="flex items-center gap-2 px-3 py-4 mt-1">
                 <img
-                  src="/src/assets/jobpilot.svg"
+                  src={jobpilotLogo}
                   alt="JobPilot Logo"
                   className="w-7 h-7 flex-shrink-0"
                 />
@@ -129,6 +131,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             )}
           </SidebarFooter>
         </Sidebar>
+
         <SidebarInset className="flex flex-col flex-1 min-w-0">
           {isOverview && (
             <>
