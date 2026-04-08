@@ -59,8 +59,6 @@ const PostJob = () => {
     if (!form.jobLevel) newErrors.jobLevel = "Select job level";
     if (!form.expiryDate) {
       newErrors.expiryDate = "Expiry date required";
-    } else if (!/^\d{2}\/\d{2}\/\d{4}$/.test(form.expiryDate)) {
-      newErrors.expiryDate = "Format should be dd/mm/yyyy";
     }
     if (!form.country) newErrors.country = "Select country";
     if (!form.city) newErrors.city = "Select city";
@@ -80,17 +78,22 @@ const PostJob = () => {
     e.preventDefault();
     if (!validate()) return;
 
+    const [y, m, d] = form.expiryDate.split("-");
+    const formattedDate = `${d}/${m}/${y}`;
+
     addJob({
       id: crypto.randomUUID(),
       title: form.title,
       type: form.jobType,
       status: "Active",
       applications: 0,
-      expiryDate: form.expiryDate,
+      expiryDate: formattedDate,
     });
 
     navigate("/dashboard/my-jobs");
   };
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <DashboardLayout>
@@ -119,7 +122,7 @@ const PostJob = () => {
           <SelectField
             label="Job Role"
             value={form.role}
-            onChange={(v) => handleChange("role", v)}
+            onChange={(v: string) => handleChange("role", v)}
             error={errors.role}
             options={[
               { value: "developer", label: "Developer" },
@@ -151,7 +154,7 @@ const PostJob = () => {
             <SelectField
               label="Salary Type"
               value={form.salaryType}
-              onChange={(v) => handleChange("salaryType", v)}
+              onChange={(v: string) => handleChange("salaryType", v)}
               error={errors.salaryType}
               options={[
                 { value: "monthly", label: "Monthly" },
@@ -167,7 +170,7 @@ const PostJob = () => {
             <SelectField
               label="Education Level"
               value={form.education}
-              onChange={(v) => handleChange("education", v)}
+              onChange={(v: string) => handleChange("education", v)}
               error={errors.education}
               options={[
                 { value: "high_school", label: "High School" },
@@ -179,7 +182,7 @@ const PostJob = () => {
             <SelectField
               label="Experience Level"
               value={form.experience}
-              onChange={(v) => handleChange("experience", v)}
+              onChange={(v: string) => handleChange("experience", v)}
               error={errors.experience}
               options={[
                 { value: "entry", label: "Entry Level" },
@@ -191,7 +194,7 @@ const PostJob = () => {
             <SelectField
               label="Job Type"
               value={form.jobType}
-              onChange={(v) => handleChange("jobType", v)}
+              onChange={(v: string) => handleChange("jobType", v)}
               error={errors.jobType}
               options={[
                 { value: "full_time", label: "Full Time" },
@@ -206,7 +209,7 @@ const PostJob = () => {
             <SelectField
               label="Job Level"
               value={form.jobLevel}
-              onChange={(v) => handleChange("jobLevel", v)}
+              onChange={(v: string) => handleChange("jobLevel", v)}
               error={errors.jobLevel}
               options={[
                 { value: "junior", label: "Junior" },
@@ -215,12 +218,16 @@ const PostJob = () => {
                 { value: "lead", label: "Lead" },
               ]}
             />
+
             <Field label="Expiration Date" error={errors.expiryDate}>
-              <Input
-                placeholder="dd/mm/yyyy"
+              <input
+                type="date"
+                min={today}
                 value={form.expiryDate}
                 onChange={(e) => handleChange("expiryDate", e.target.value)}
-                className={inputClass(errors.expiryDate)}
+                className={`h-12 w-full rounded-md border px-3 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 transition-colors ${
+                  errors.expiryDate ? "border-red-500" : "border-input"
+                }`}
               />
             </Field>
           </div>
@@ -231,7 +238,7 @@ const PostJob = () => {
             <SelectField
               label="Country"
               value={form.country}
-              onChange={(v) => handleChange("country", v)}
+              onChange={(v: string) => handleChange("country", v)}
               error={errors.country}
               options={[
                 { value: "usa", label: "United States" },
@@ -243,7 +250,7 @@ const PostJob = () => {
             <SelectField
               label="City"
               value={form.city}
-              onChange={(v) => handleChange("city", v)}
+              onChange={(v: string) => handleChange("city", v)}
               error={errors.city}
               options={[
                 { value: "new_york", label: "New York" },
