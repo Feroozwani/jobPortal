@@ -28,10 +28,24 @@ const AccountSetup = () => {
   });
 
   const [errors, setErrors] = useState<any>({});
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
     setErrors({ ...errors, [field]: "" });
+  };
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large. Max size is 5 MB.");
+      return;
+    }
+    setLogoFile(file);
+    const url = URL.createObjectURL(file);
+    setLogoPreview(url);
   };
 
   const validate = () => {
@@ -45,9 +59,7 @@ const AccountSetup = () => {
     if (!form.teamSize) newErrors.teamSize = "Select team size";
 
     if (!form.year) {
-      newErrors.year = "Year is required";
-    } else if (!/^\d{4}$/.test(form.year)) {
-      newErrors.year = "Enter valid year (e.g., 2015)";
+      newErrors.year = "Year of establishment is required";
     }
 
     if (!form.about.trim()) newErrors.about = "About us is required";
@@ -101,6 +113,12 @@ const AccountSetup = () => {
     navigate("/setup-complete");
   };
 
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from(
+    { length: currentYear - 1949 },
+    (_, i) => currentYear - i,
+  );
+
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 md:px-10 lg:px-16 py-6">
       <JobPilotLogo />
@@ -117,20 +135,41 @@ const AccountSetup = () => {
               Logo Upload
             </h2>
 
-            <div className="w-full max-w-[280px] h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors text-center px-4">
-              <img
-                src="/src/assets/cloud-upload.svg"
-                alt="Cloud Upload"
-                className="w-12 h-12 mb-3"
+            <label className="w-full max-w-[280px] h-40 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors text-center px-4 relative overflow-hidden">
+              {logoPreview ? (
+                <img
+                  src={logoPreview}
+                  alt="Logo preview"
+                  className="max-h-full max-w-full object-contain rounded-lg"
+                />
+              ) : (
+                <>
+                  <img
+                    src="/src/assets/cloud-upload.svg"
+                    alt="Cloud Upload"
+                    className="w-12 h-12 mb-3"
+                  />
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Browse photo</span> or drop
+                    here
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    A photo larger than 400 pixels works best.
+                  </p>
+                  <p className="text-xs text-gray-500">Max file size 5 MB.</p>
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleLogoChange}
               />
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Browse photo</span> or drop here
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                A photo larger than 400 pixels works best.
-              </p>
-              <p className="text-xs text-gray-500">Max file size 5 MB.</p>
-            </div>
+            </label>
+
+            {logoFile && (
+              <p className="text-xs text-gray-500 mt-2">{logoFile.name}</p>
+            )}
           </div>
 
           <div>
@@ -223,13 +262,18 @@ const AccountSetup = () => {
                 <label className="text-sm text-muted-foreground mb-1.5 block">
                   Year of Establishment
                 </label>
-                <Input
-                  className="h-11"
-                  placeholder="YYYY"
-                  maxLength={4}
-                  value={form.year}
-                  onChange={(e) => handleChange("year", e.target.value)}
-                />
+                <Select onValueChange={(val) => handleChange("year", val)}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-56 overflow-y-auto">
+                    {yearOptions.map((y) => (
+                      <SelectItem key={y} value={String(y)}>
+                        {y}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors.year && (
                   <p className="text-red-500 text-xs mt-1">{errors.year}</p>
                 )}
