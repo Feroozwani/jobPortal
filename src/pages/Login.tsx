@@ -169,7 +169,7 @@ const Login = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Button
             variant="outline"
-            onClick={handleSocialLogin}
+            onClick={() => {}}
             className="h-11 sm:h-12 rounded-full gap-2 text-sm font-normal justify-center"
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@ const Login = () => {
 
           <Button
             variant="outline"
-            onClick={handleSocialLogin}
+            onClick={() => {}}
             className="h-11 sm:h-12 rounded-full gap-2 text-sm font-normal justify-center"
           >
             <svg width="18" height="18" viewBox="0 0 18 18">
